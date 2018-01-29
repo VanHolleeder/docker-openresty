@@ -5,16 +5,16 @@ set -e
 
 # SIGHUP-handler
 sighup_handler() {
-  echo "Reloading nginx configuration and certificates..."
-  nginx -s reload
+  echo "Reloading openresty configuration and certificates..."
+  /usr/local/openresty/bin/openresty -s reload
 }
 
 # SIGTERM-handler
 sigterm_handler() {
-  # kubernetes sends a sigterm, where nginx needs SIGQUIT for graceful shutdown
-  echo "Gracefully shutting down nginx..."
-  nginx -s quit
-  echo "Finished shutting down nginx!"
+  # kubernetes sends a sigterm, where openresty needs SIGQUIT for graceful shutdown
+  echo "Gracefully shutting down openresty..."
+  /usr/local/openresty/bin/openresty -s quit
+  echo "Finished shutting down openresty!"
 
   # stop inotifywait
   inotifywait_pid=$(pgrep inotifywait)
@@ -40,7 +40,7 @@ fi
 
 # substitute envvars in nginx.conf
 echo "Generating nginx.conf..."
-cat ${NGINX_CONF_TMPL_PATH} | envsubst \$OFFLOAD_TO_HOST,\$OFFLOAD_TO_PORT,\$OFFLOAD_TO_PROTO,\$HEALT_CHECK_PATH,\$ALLOW_CIDRS,\$SERVICE_NAME,\$NAMESPACE,\$DNS_ZONE,\$CLIENT_BODY_TIMEOUT,\$CLIENT_HEADER_TIMEOUT,\$KEEPALIVE_TIMEOUT,\$KEEPALIVE_REQUESTS,\$SEND_TIMEOUT,\$PROXY_CONNECT_TIMEOUT,\$PROXY_SEND_TIMEOUT,\$PROXY_READ_TIMEOUT,\$PROMETHEUS_METRICS_PORT,\$SSL_PROTOCOLS > /etc/nginx/nginx.conf
+cat ${NGINX_CONF_TMPL_PATH} | envsubst \$OFFLOAD_TO_HOST,\$OFFLOAD_TO_PORT,\$OFFLOAD_TO_PROTO,\$HEALT_CHECK_PATH,\$ALLOW_CIDRS,\$SERVICE_NAME,\$NAMESPACE,\$DNS_ZONE,\$CLIENT_BODY_TIMEOUT,\$CLIENT_HEADER_TIMEOUT,\$KEEPALIVE_TIMEOUT,\$KEEPALIVE_REQUESTS,\$SEND_TIMEOUT,\$PROXY_CONNECT_TIMEOUT,\$PROXY_SEND_TIMEOUT,\$PROXY_READ_TIMEOUT,\$PROMETHEUS_METRICS_PORT,\$SSL_PROTOCOLS > /usr/local/openresty/nginx/conf/nginx.conf
 
 # substitute envvars in prometheus.lua
 echo "Generating prometheus.lua..."
@@ -57,9 +57,9 @@ init_inotifywait() {
 }
 init_inotifywait &
 
-# run nginx
-echo "Starting nginx..."
-nginx &
+# run openresty
+echo "Starting openresty..."
+/usr/local/openresty/bin/openresty &
 
 # wait forever until sigterm_handler stops all background processes
 while true
