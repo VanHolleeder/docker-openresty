@@ -44,6 +44,7 @@ cat ${NGINX_CONF_TMPL_PATH} | envsubst \$OFFLOAD_TO_HOST,\$OFFLOAD_TO_PORT,\$OFF
 
 # substitute envvars in prometheus.lua
 echo "Generating prometheus.lua..."
+mkdir -p /lua-modules
 cat ${PROMETHEUS_LUA_TMPL_PATH} | envsubst \$DEFAULT_BUCKETS > /lua-modules/prometheus.lua
 
 # watch for ssl certificate changes
