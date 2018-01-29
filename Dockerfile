@@ -3,7 +3,7 @@ FROM openresty/openresty:1.13.6.1-alpine
 EXPOSE 80 81 82 443 9101
 
 COPY nginx.conf /tmpl/nginx.conf.tmpl
-COPY lua-init.conf /etc/nginx/includes/lua-init.conf
+COPY lua-init.conf /usr/local/openresty/nginx/conf/includes/lua-init.conf
 COPY prometheus.lua /tmpl/prometheus.lua.tmpl
 COPY ./docker-entrypoint.sh /
 
