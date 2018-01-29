@@ -11,7 +11,7 @@ RUN chmod 500 /docker-entrypoint.sh
 
 # install inotifywait to detect changes to config and certificates
 RUN apk --update upgrade && \
-    apk add --update inotify-tools gettext && \
+    apk add --update apache2-utils inotify-tools gettext && \
     rm -rf /var/cache/apk/*
 
 # runtime environment variables
@@ -20,6 +20,7 @@ ENV OFFLOAD_TO_HOST=localhost \
     OFFLOAD_TO_PROTO=http \
     HEALT_CHECK_PATH=/ \
     ALLOW_CIDRS="allow 0.0.0.0/0;" \
+    ACL_USERS="" \
     SERVICE_NAME="myservice" \
     NAMESPACE="mynamespace" \
     DNS_ZONE="travix.com" \
