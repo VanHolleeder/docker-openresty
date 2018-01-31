@@ -52,13 +52,13 @@ if [ -n "$ACL_USERS" ]
 then
   echo "Setting up ACL users..."
 
-  touch /etc/nginx/.htpasswd
+  touch /usr/local/openresty/nginx/conf/.htpasswd
 
   echo $ACL_USERS | awk '{
     split($0,creds," ")
     for (i in creds) {
       split(creds[i],user,":")
-      system("htpasswd -b /etc/nginx/.htpasswd " user[1] " " user[2])
+      system("htpasswd -b /usr/local/openresty/nginx/conf/.htpasswd " user[1] " " user[2])
     }
   }'
 fi
