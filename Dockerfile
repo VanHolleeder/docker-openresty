@@ -24,6 +24,7 @@ ENV OFFLOAD_TO_HOST=localhost \
     SERVICE_NAME="myservice" \
     NAMESPACE="mynamespace" \
     DNS_ZONE="travix.com" \
+    CLIENT_MAX_BODY_SIZE="128m" \
     CLIENT_BODY_TIMEOUT="60s" \
     CLIENT_HEADER_TIMEOUT="60s" \
     KEEPALIVE_TIMEOUT="650s" \
