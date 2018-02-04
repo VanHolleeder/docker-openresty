@@ -1,5 +1,5 @@
 #!/bin/sh
-set -ex
+set -e
 
 # inspired by https://medium.com/@gchudnov/trapping-signals-in-docker-containers-7a57fdda7d86#.k9cjxrx6o
 
@@ -70,8 +70,9 @@ cat ${NGINX_CONF_TMPL_PATH} | envsubst \$OFFLOAD_TO_HOST,\$OFFLOAD_TO_PORT,\$OFF
 if [ "${SETUP_CORS}" == "true" ]; then
   echo "Generating cors.conf..."
   cat ${NGINX_CORS_CONF_TMPL_PATH} | envsubst \$CORS_ALLOWED_ORIGINS,\$CORS_MAX_AGE > /tmpl/cors.conf
-  sed "/#cors/ {r /tmpl/cors.conf
-d}" /usr/local/openresty/nginx/conf/nginx.conf
+  cat /usr/local/openresty/nginx/conf/nginx.conf | awk -v file="$(cat /tmpl/cors.conf | tr '\n' ' ')" 'gsub(/\#cors/, file)1' > /tmpl/nginx-cors.conf
+  cat /tmpl/nginx-cors.conf > /usr/local/openresty/nginx/conf/nginx.conf
+  rm /tmpl/nginx-cors.conf
 fi
 
 # substitute envvars in prometheus.lua
